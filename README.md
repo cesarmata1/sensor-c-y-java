@@ -1,19 +1,38 @@
-# Sensor-C-y-Java
+# Sensores y actuadores con sockets — C + Java
 
-Este repositorio contiene una práctica en la que se trabaja con sensores combinando **C y Java**. El proyecto forma parte de las actividades realizadas en clase para aplicar conceptos de programación en distintos lenguajes y entender cómo interactúan entre sí.
+Simulación de un pequeño sistema **IoT distribuido** en el que programas escritos en **C** y en **Java** se comunican entre sí por red mediante **sockets UDP y TCP**. Demuestra que la comunicación por sockets es independiente del lenguaje.
 
-## Descripción
+## 🏗️ Arquitectura
+```
+┌────────┐  UDP   ┌──────────────────┐  TCP   ┌─────────────────────────┐
+│ Sensor │ ─────► │ Gestor de medidas│ ─────► │ Actuador de temperatura │
+└────────┘        │(decide si actuar)│ ─────► │ Actuador de luz         │
+                  └──────────────────┘        └─────────────────────────┘
+```
 
-El código aquí presente incluye archivos escritos en **C** y **Java**. En esta práctica se realiza la lectura y/o simulación de datos desde un sensor, y se muestra cómo manejar esos datos utilizando programación en ambos lenguajes. El objetivo es reforzar el aprendizaje de entrada/salida de datos, estructuras y comunicación entre componentes.
+| Componente | Lenguaje | Protocolo | Función |
+|---|---|---|---|
+| `sensor.c` | C | UDP (cliente) | Genera medidas aleatorias de temperatura o luz y las envía al gestor |
+| `GestorDeMedidas.java` | Java | UDP (servidor) → TCP (cliente) | Recibe las medidas y, si están fuera de rango, avisa al actuador correspondiente |
+| `ActivadorT.java` | Java | TCP (servidor) | Actuador de temperatura: activa el climatizador |
+| `activadorL.c` | C | TCP (servidor) | Actuador de luz: enciende la luz |
 
-## Tecnologías utilizadas
+Todas las IP y puertos se piden por consola al arrancar (con validación), así que los componentes pueden ejecutarse en máquinas distintas.
 
-- Lenguaje **C**
-- Lenguaje **Java**
-- Compiladores y herramientas estándar para C y Java
+## ▶️ Cómo ejecutarlo
+```bash
+cd "Sockets c y Java"
+gcc activadorL.c -o activadorL
+gcc sensor.c -o sensor
+javac ActivadorT.java GestorDeMedidas.java
+```
+Arranca en este orden (cada uno en una terminal):
+1. `./activadorL` y `java ActivadorT` (actuadores)
+2. `java GestorDeMedidas`
+3. `./sensor`
 
-## Cómo ejecutar el proyecto
+## 📄 Documentación
+La memoria de la entrega está en `Sockets c y Java/MEMORIA SEGUNDA ENTREGA.docx`.
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/cesarmata1/sensor-c-y-java.git
+## 🛠️ Tecnologías
+C (POSIX sockets) · Java (`java.net`) · UDP · TCP
